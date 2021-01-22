@@ -36,17 +36,20 @@ scene.add(axesHelper)
 const renderer = new THREE.WebGLRenderer({ canvas })
 renderer.setSize(sizes.width, sizes.height)
 
-let time = Date.now()
+// Clock
+const clock = new THREE.Clock()
 
 // Animations
 const tick = () => {
-  // Time
-  const currentTime = Date.now()
-  const delta = currentTime - time
-  time = currentTime
+  // Clock
+  const elapsedTime = clock.getElapsedTime()
 
   // Update objects
-  group.position.x += 0.001 * delta
+  // group.position.y = Math.sin(elapsedTime)
+  // group.position.x = Math.cos(elapsedTime)
+  camera.position.y = Math.sin(elapsedTime)
+  camera.position.x = Math.cos(elapsedTime)
+  camera.lookAt(group.position)
 
   // Render
   renderer.render(scene, camera)
