@@ -33,8 +33,24 @@ const axesHelper = new THREE.AxesHelper(3)
 scene.add(axesHelper)
 
 // Renderer
-
 const renderer = new THREE.WebGLRenderer({ canvas })
-
 renderer.setSize(sizes.width, sizes.height)
-renderer.render(scene, camera)
+
+let time = Date.now()
+
+// Animations
+const tick = () => {
+  // Time
+  const currentTime = Date.now()
+  const delta = currentTime - time
+  time = currentTime
+
+  // Update objects
+  group.position.x += 0.001 * delta
+
+  // Render
+  renderer.render(scene, camera)
+  window.requestAnimationFrame(tick)
+}
+
+tick()
