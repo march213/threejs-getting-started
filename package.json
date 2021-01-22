@@ -8,6 +8,7 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
+    "gsap": "3.6.0",
     "three": "0.124.0"
   },
   "devDependencies": {

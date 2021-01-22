@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import gsap from 'gsap'
 import './styles.css'
 
 const canvas = document.querySelector('.webgl')
@@ -36,20 +37,13 @@ scene.add(axesHelper)
 const renderer = new THREE.WebGLRenderer({ canvas })
 renderer.setSize(sizes.width, sizes.height)
 
-// Clock
-const clock = new THREE.Clock()
+const tl = gsap.timeline({ repeat: -1 })
+tl.to(group.position, { duration: 2, x: 2 })
+tl.to(group.position, { duration: 2, x: 0 })
 
 // Animations
 const tick = () => {
-  // Clock
-  const elapsedTime = clock.getElapsedTime()
-
   // Update objects
-  // group.position.y = Math.sin(elapsedTime)
-  // group.position.x = Math.cos(elapsedTime)
-  camera.position.y = Math.sin(elapsedTime)
-  camera.position.x = Math.cos(elapsedTime)
-  camera.lookAt(group.position)
 
   // Render
   renderer.render(scene, camera)
