@@ -9,7 +9,7 @@ const cursor = {
 
 window.addEventListener('mousemove', (e) => {
   cursor.x = e.clientX / sizes.width - 0.5
-  cursor.y = e.clientY / sizes.height - 0.5
+  cursor.y = -(e.clientY / sizes.height - 0.5)
 })
 
 const canvas = document.querySelector('.webgl')
@@ -52,8 +52,11 @@ const tick = () => {
   // mesh.rotation.y = elapsedTime
 
   // Update camera
-  camera.position.x = cursor.x
-  camera.position.y = cursor.y
+  camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3
+  camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3
+  camera.position.y = cursor.y * 5
+
+  camera.lookAt(mesh.position)
 
   // Render
   renderer.render(scene, camera)
