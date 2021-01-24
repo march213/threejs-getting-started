@@ -2,24 +2,53 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import './styles.css'
 
-// Cursor
-const cursor = {
-  x: 0,
-  y: 0,
-}
-
-window.addEventListener('mousemove', (e) => {
-  cursor.x = e.clientX / sizes.width - 0.5
-  cursor.y = -(e.clientY / sizes.height - 0.5)
-})
-
 const canvas = document.querySelector('.webgl')
 
 // Sizes
 const sizes = {
-  width: 800,
-  height: 600,
+  width: window.innerWidth,
+  height: window.innerHeight,
 }
+
+window.addEventListener('resize', () => {
+  sizes.width = window.innerWidth
+  sizes.height = window.innerHeight
+
+  // Update camera
+  camera.aspect = sizes.width / sizes.height
+  camera.updateProjectionMatrix()
+
+  // Update renderer
+  renderer.setSize(sizes.width, sizes.height)
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+})
+
+window.addEventListener('dblclick', (e) => {
+  // Add Safari support with webkit prefix
+  const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement
+
+  if (!fullscreenElement) {
+    if (canvas.requestFullscreen) {
+      canvas.requestFullscreen()
+      return
+    }
+
+    if (canvas.webkitRequestFullscreen) {
+      canvas.webkitRequestFullscreen()
+      return
+    }
+  }
+
+  if (document.exitFullscreen) {
+    document.exitFullscreen()
+    return
+  }
+
+  if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen()
+    return
+  }
+})
 
 // Scene
 const scene = new THREE.Scene()
@@ -45,19 +74,12 @@ controls.enableDamping = true
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({
-  canvas: canvas,
+  canvas,
 })
 renderer.setSize(sizes.width, sizes.height)
-
-// Animate
-// const clock = new THREE.Clock()
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 const tick = () => {
-  // const elapsedTime = clock.getElapsedTime()
-
-  // Update objects
-  // mesh.rotation.y = elapsedTime
-
   // Update controls
   controls.update()
 
