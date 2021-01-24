@@ -1,6 +1,17 @@
 import * as THREE from 'three'
 import './styles.css'
 
+// Cursor
+const cursor = {
+  x: 0,
+  y: 0,
+}
+
+window.addEventListener('mousemove', (e) => {
+  cursor.x = e.clientX / sizes.width - 0.5
+  cursor.y = e.clientY / sizes.height - 0.5
+})
+
 const canvas = document.querySelector('.webgl')
 // Sizes
 const sizes = {
@@ -16,12 +27,12 @@ const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1, 5, 5, 5), new THREE.M
 scene.add(mesh)
 
 // Camera
-// const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
 const aspectRation = sizes.width / sizes.height
-const camera = new THREE.OrthographicCamera(-1 * aspectRation, 1 * aspectRation, 1, -1, 1, 100)
-camera.position.x = 2
-camera.position.y = 2
-camera.position.z = 2
+const camera = new THREE.PerspectiveCamera(75, aspectRation)
+// const camera = new THREE.OrthographicCamera(-1 * aspectRation, 1 * aspectRation, 1, -1, 1, 100)
+// camera.position.x = 2
+// camera.position.y = 2
+camera.position.z = 3
 camera.lookAt(mesh.position)
 scene.add(camera)
 
@@ -38,7 +49,11 @@ const tick = () => {
   const elapsedTime = clock.getElapsedTime()
 
   // Update objects
-  mesh.rotation.y = elapsedTime
+  // mesh.rotation.y = elapsedTime
+
+  // Update camera
+  camera.position.x = cursor.x
+  camera.position.y = cursor.y
 
   // Render
   renderer.render(scene, camera)
