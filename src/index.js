@@ -54,7 +54,23 @@ window.addEventListener('dblclick', (e) => {
 const scene = new THREE.Scene()
 
 // Object
-const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1, 5, 5, 5), new THREE.MeshBasicMaterial({ color: 0xff0000 }))
+// const geometry = new THREE.BoxGeometry(1, 1, 1, 5, 5, 5)
+const geometry = new THREE.Geometry()
+
+for (let i = 0; i < 50; i++) {
+  for (let j = 0; j < 3; j++) {
+    const vertices = new THREE.Vector3((Math.random() - 0.5) * 4, (Math.random() - 0.5) * 4, (Math.random() - 0.5) * 4)
+    geometry.vertices.push(vertices)
+  }
+  const verticesIndex = i * 3
+  geometry.faces.push(new THREE.Face3(verticesIndex, verticesIndex + 1, verticesIndex + 2))
+}
+
+const material = new THREE.MeshBasicMaterial({
+  color: 0x00ff00,
+  wireframe: true,
+})
+const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
 
 // Camera
