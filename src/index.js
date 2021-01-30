@@ -54,17 +54,26 @@ window.addEventListener('dblclick', (e) => {
 const scene = new THREE.Scene()
 
 // Object
-// const geometry = new THREE.BoxGeometry(1, 1, 1, 5, 5, 5)
-const geometry = new THREE.Geometry()
+// const geometry = new THREE.BoxBufferGeometry(1, 1, 1, 2, 2, 2)
+const positionsArray = new Float32Array(9)
 
-for (let i = 0; i < 50; i++) {
-  for (let j = 0; j < 3; j++) {
-    const vertices = new THREE.Vector3((Math.random() - 0.5) * 4, (Math.random() - 0.5) * 4, (Math.random() - 0.5) * 4)
-    geometry.vertices.push(vertices)
-  }
-  const verticesIndex = i * 3
-  geometry.faces.push(new THREE.Face3(verticesIndex, verticesIndex + 1, verticesIndex + 2))
-}
+// three vertices = 1 triangle (face)
+positionsArray[0] = 0 // x
+positionsArray[1] = 0 // y
+positionsArray[2] = 0 // z
+
+positionsArray[3] = 0 // x
+positionsArray[4] = 1 // y
+positionsArray[5] = 0 // z
+
+positionsArray[6] = 1 // x
+positionsArray[7] = 0 // y
+positionsArray[8] = 0 // z
+
+const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3)
+
+const geometry = new THREE.BufferGeometry()
+geometry.setAttribute('position', positionsAttribute)
 
 const material = new THREE.MeshBasicMaterial({
   color: 0x00ff00,
