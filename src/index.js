@@ -1,6 +1,11 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import gsap from 'gsap'
+import * as dat from 'dat.gui'
 import './styles.css'
+
+// Debug
+const gui = new dat.GUI()
 
 const canvas = document.querySelector('.webgl')
 
@@ -58,7 +63,7 @@ const scene = new THREE.Scene()
 
 const geometry = new THREE.BufferGeometry()
 
-const count = 5000
+const count = 50
 // 1 vertex consist of 3 values (x, y, z)
 // 1 face consist of 3 vertices
 const positionsArray = new Float32Array(count * 3 * 3)
