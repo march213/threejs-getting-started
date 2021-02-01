@@ -5,7 +5,21 @@ import * as dat from 'dat.gui'
 import './styles.css'
 
 // Debug
-const gui = new dat.GUI()
+const gui = new dat.GUI({ closed: true, width: 400 })
+const parameters = {
+  color: 0xff0000,
+  spin: () => {
+    gsap.to(mesh.rotation, { duration: 1, y: mesh.rotation.y + Math.PI * 2 })
+  },
+}
+
+// Update material colour
+gui.addColor(parameters, 'color').onChange(() => {
+  material.color.set(parameters.color)
+})
+
+// Add spin parameter
+gui.add(parameters, 'spin')
 
 const canvas = document.querySelector('.webgl')
 
@@ -28,6 +42,7 @@ window.addEventListener('resize', () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
 
+/*
 window.addEventListener('dblclick', (e) => {
   // Add Safari support with webkit prefix
   const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement
@@ -54,30 +69,15 @@ window.addEventListener('dblclick', (e) => {
     return
   }
 })
+*/
 
 // Scene
 const scene = new THREE.Scene()
 
 // Object
-// const geometry = new THREE.BoxBufferGeometry(1, 1, 1, 2, 2, 2)
-
-const geometry = new THREE.BufferGeometry()
-
-const count = 50
-// 1 vertex consist of 3 values (x, y, z)
-// 1 face consist of 3 vertices
-const positionsArray = new Float32Array(count * 3 * 3)
-
-for (let i = 0; i < count * 3 * 3; i++) {
-  positionsArray[i] = (Math.random() - 0.5) * 4
-}
-
-const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3)
-geometry.setAttribute('position', positionsAttribute)
-
+const geometry = new THREE.BoxBufferGeometry(1, 1, 1, 2, 2, 2)
 const material = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-  wireframe: true,
+  color: parameters.color,
 })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
@@ -85,15 +85,16 @@ scene.add(mesh)
 // Camera
 const aspectRation = sizes.width / sizes.height
 const camera = new THREE.PerspectiveCamera(75, aspectRation)
-// const camera = new THREE.OrthographicCamera(-1 * aspectRation, 1 * aspectRation, 1, -1, 1, 100)
-// camera.position.x = 2
-// camera.position.y = 2
 camera.position.z = 3
 camera.lookAt(mesh.position)
 scene.add(camera)
 
-// Controls
+// Debug
+gui.add(mesh.position, 'y').min(-3).max(3).step(0.01).name('elevation')
+gui.add(mesh, 'visible')
+gui.add(material, 'wireframe')
 
+// Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
 
