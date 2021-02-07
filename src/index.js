@@ -3,13 +3,52 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 import './styles.css'
 
-// Texture
-const image = new Image()
-const texture = new THREE.Texture(image)
-image.onload = () => {
-  texture.needsUpdate = true
+// Textures
+const loadingManager = new THREE.LoadingManager()
+loadingManager.onStart = () => {
+  console.log('loading started')
 }
-image.src = require('./assets/textures/door/color.jpg')
+
+loadingManager.onLoad = () => {
+  console.log('loading finished')
+}
+
+loadingManager.onProgress = () => {
+  console.log('loading progressing')
+}
+
+loadingManager.onError = () => {
+  console.log('loading failed')
+}
+
+const textureLoader = new THREE.TextureLoader(loadingManager)
+// const colorTexture = textureLoader.load(require('./assets/textures/door/color.jpg'))
+// const colorTexture = textureLoader.load(require('./assets/textures/checkerboard-1024x1024.png'))
+const colorTexture = textureLoader.load(require('./assets/textures/minecraft.png'))
+const alphaTexture = textureLoader.load(require('./assets/textures/door/alpha.jpg'))
+const heightTexture = textureLoader.load(require('./assets/textures/door/height.jpg'))
+const normalTexture = textureLoader.load(require('./assets/textures/door/normal.jpg'))
+const ambientOcclusionTexture = textureLoader.load(require('./assets/textures/door/ambientOcclusion.jpg'))
+const metalnessTexture = textureLoader.load(require('./assets/textures/door/metalness.jpg'))
+const roughnessTexture = textureLoader.load(require('./assets/textures/door/roughness.jpg'))
+
+// colorTexture.repeat.x = 2
+// colorTexture.repeat.y = 2
+// colorTexture.wrapS = THREE.RepeatWrapping
+// colorTexture.wrapT = THREE.RepeatWrapping
+
+// colorTexture.offset.x = 0.5
+// colorTexture.offset.y = 0.5
+
+// colorTexture.rotation = Math.PI * 0.25
+// colorTexture.center.x = 0.5
+// colorTexture.center.y = 0.5
+
+// if minFilter and magFilter set to THREE.NearestFilter
+// need to disable mipmap generations
+colorTexture.generateMipmaps = false
+colorTexture.minFilter = THREE.NearestFilter
+colorTexture.magFilter = THREE.NearestFilter
 
 const canvas = document.querySelector('.webgl')
 
@@ -68,7 +107,7 @@ const scene = new THREE.Scene()
 const geometry = new THREE.BoxBufferGeometry(1, 1, 1, 2, 2, 2)
 const material = new THREE.MeshBasicMaterial({
   // color: 0xff00f0,
-  map: texture,
+  map: colorTexture,
 })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
