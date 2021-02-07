@@ -1,25 +1,15 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import gsap from 'gsap'
-import * as dat from 'dat.gui'
+
 import './styles.css'
 
-// Debug
-const gui = new dat.GUI({ closed: true, width: 400 })
-const parameters = {
-  color: 0xff0000,
-  spin: () => {
-    gsap.to(mesh.rotation, { duration: 1, y: mesh.rotation.y + Math.PI * 2 })
-  },
+// Texture
+const image = new Image()
+const texture = new THREE.Texture(image)
+image.onload = () => {
+  texture.needsUpdate = true
 }
-
-// Update material colour
-gui.addColor(parameters, 'color').onChange(() => {
-  material.color.set(parameters.color)
-})
-
-// Add spin parameter
-gui.add(parameters, 'spin')
+image.src = require('./assets/textures/door/color.jpg')
 
 const canvas = document.querySelector('.webgl')
 
@@ -77,7 +67,8 @@ const scene = new THREE.Scene()
 // Object
 const geometry = new THREE.BoxBufferGeometry(1, 1, 1, 2, 2, 2)
 const material = new THREE.MeshBasicMaterial({
-  color: parameters.color,
+  // color: 0xff00f0,
+  map: texture,
 })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
@@ -88,11 +79,6 @@ const camera = new THREE.PerspectiveCamera(75, aspectRation)
 camera.position.z = 3
 camera.lookAt(mesh.position)
 scene.add(camera)
-
-// Debug
-gui.add(mesh.position, 'y').min(-3).max(3).step(0.01).name('elevation')
-gui.add(mesh, 'visible')
-gui.add(material, 'wireframe')
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
