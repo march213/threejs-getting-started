@@ -21,6 +21,23 @@ const scene = new THREE.Scene()
 const textureLoader = new THREE.TextureLoader()
 
 /**
+ * Fonts
+ */
+const fontLoader = new THREE.FontLoader()
+fontLoader.load(
+  'fonts/Roboto_Regular.json',
+  () => {
+    console.log('font loaded')
+  },
+  (xhr) => {
+    console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+  },
+  (err) => {
+    console.log('An error happened', err)
+  }
+)
+
+/**
  * Object
  */
 const cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial())
