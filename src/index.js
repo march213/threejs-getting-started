@@ -19,30 +19,51 @@ const scene = new THREE.Scene()
  * Textures
  */
 const textureLoader = new THREE.TextureLoader()
+const matcapTexture = textureLoader.load(require('./assets/textures/matcaps/4.png'))
+const matcapMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture })
 
 /**
  * Fonts
  */
 const fontLoader = new THREE.FontLoader()
-fontLoader.load(
-  'fonts/Roboto_Regular.json',
-  () => {
-    console.log('font loaded')
-  },
-  (xhr) => {
-    console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
-  },
-  (err) => {
-    console.log('An error happened', err)
+fontLoader.load('fonts/Roboto_Regular.json', (font) => {
+  const textGeometry = new THREE.TextBufferGeometry('Jane Molodetskaya', {
+    font: font,
+    size: 0.5,
+    height: 0.2,
+    curveSegments: 5,
+    bevelEnabled: true,
+    bevelThickness: 0.03,
+    bevelSize: 0.02,
+    bevelOffset: 0,
+    bevelSegments: 4,
+  })
+  // manual text centring
+  // textGeometry.computeBoundingBox()
+  // textGeometry.translate(-(textGeometry.boundingBox.max.x - 0.02) * 0.5, -(textGeometry.boundingBox.max.y - 0.02) * 0.5, -(textGeometry.boundingBox.max.z - 0.03) * 0.5)
+
+  textGeometry.center()
+
+  const text = new THREE.Mesh(textGeometry, matcapMaterial)
+  scene.add(text)
+
+  const donutGeometry = new THREE.TorusBufferGeometry(0.3, 0.2, 20, 45)
+
+  for (let i = 0; i < 300; i++) {
+    const donut = new THREE.Mesh(donutGeometry, matcapMaterial)
+    donut.position.x = (Math.random() - 0.5) * 10
+    donut.position.y = (Math.random() - 0.5) * 10
+    donut.position.z = (Math.random() - 0.5) * 10
+
+    donut.rotation.x = Math.random() * Math.PI
+    donut.rotation.y = Math.random() * Math.PI
+
+    const scale = Math.random()
+    donut.scale.set(scale, scale, scale)
+
+    scene.add(donut)
   }
-)
-
-/**
- * Object
- */
-const cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial())
-
-scene.add(cube)
+})
 
 /**
  * Sizes
