@@ -6,8 +6,8 @@ import './styles.css'
 /**
  * Base
  */
-// Debug
-const gui = new dat.GUI()
+// // Debug
+// const gui = new dat.GUI()
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -16,34 +16,52 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 /**
- * Lights
+ * Textures
  */
-const ambienLight = new THREE.AmbientLight(0xffffff, 0.5)
-scene.add(ambienLight)
-
-gui.add(ambienLight, 'intensity').min(0).max(1).step(0.01)
+const textureLoader = new THREE.TextureLoader()
+const matcapTexture = textureLoader.load(require('./assets/textures/matcaps/12.png'))
+const material = new THREE.MeshMatcapMaterial({ matcap: matcapTexture })
 
 /**
- * Objects
+ * Fonts
  */
-// Material
-const material = new THREE.MeshStandardMaterial()
-material.roughness = 0.4
+// load a font
+const fontLoader = new THREE.FontLoader()
+fontLoader.load('fonts/Roboto_Regular.json', (font) => {
+  const textGeometry = new THREE.TextBufferGeometry('Resident Evil', {
+    font: font,
+    size: 0.5,
+    height: 0.2,
+    curveSegments: 5,
+    bevelEnabled: true,
+    bevelThickness: 0.03,
+    bevelSize: 0.02,
+    bevelOffset: 0,
+    bevelSegments: 4,
+  })
+  textGeometry.center()
 
-// Objects
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), material)
-sphere.position.x = -1.5
+  const text = new THREE.Mesh(textGeometry, material)
 
-const cube = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.75, 0.75), material)
+  const donutGeometry = new THREE.TorusBufferGeometry(0.3, 0.2, 20, 45)
 
-const torus = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.2, 32, 64), material)
-torus.position.x = 1.5
+  for (let i = 0; i < 100; i++) {
+    const donut = new THREE.Mesh(donutGeometry, material)
+    donut.position.x = (Math.random() - 0.5) * 10
+    donut.position.y = (Math.random() - 0.5) * 10
+    donut.position.z = (Math.random() - 0.5) * 10
 
-const plane = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), material)
-plane.rotation.x = -Math.PI * 0.5
-plane.position.y = -0.65
+    donut.rotation.x = Math.random() * Math.PI
+    donut.rotation.y = Math.random() * Math.PI
 
-scene.add(sphere, cube, torus, plane)
+    const size = Math.random()
+    donut.scale.set(size, size, size)
+
+    scene.add(donut)
+  }
+
+  scene.add(text)
+})
 
 /**
  * Sizes
@@ -97,15 +115,6 @@ const clock = new THREE.Clock()
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime()
-
-  // Update objects
-  sphere.rotation.y = 0.1 * elapsedTime
-  cube.rotation.y = 0.1 * elapsedTime
-  torus.rotation.y = 0.1 * elapsedTime
-
-  sphere.rotation.x = 0.15 * elapsedTime
-  cube.rotation.x = 0.15 * elapsedTime
-  torus.rotation.x = 0.15 * elapsedTime
 
   // Update controls
   controls.update()
