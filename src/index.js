@@ -4,12 +4,6 @@ import * as dat from 'dat.gui'
 import './styles.css'
 
 /**
- * Textures
- */
-const textureLoader = new THREE.TextureLoader()
-const shadowTexture = textureLoader.load(require('./assets/textures/simpleShadow.jpg'))
-
-/**
  * Base
  */
 // Debug
@@ -22,105 +16,54 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 /**
- * Lights
+ * Textures
  */
-// Ambient light
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.3)
-gui.add(ambientLight, 'intensity').min(0).max(1).step(0.001)
-scene.add(ambientLight)
-
-// Directional light
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.3)
-directionalLight.position.set(2, 2, -1)
-directionalLight.castShadow = true
-directionalLight.shadow.mapSize.width = 1024
-directionalLight.shadow.mapSize.height = 1024
-directionalLight.shadow.camera.near = 1
-directionalLight.shadow.camera.far = 6
-directionalLight.shadow.camera.top = 2
-directionalLight.shadow.camera.right = 2
-directionalLight.shadow.camera.bottom = -2
-directionalLight.shadow.camera.left = -2
-directionalLight.shadow.radius = 10
-
-const directionalLightCameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera)
-directionalLightCameraHelper.visible = false
-scene.add(directionalLightCameraHelper)
-
-gui.add(directionalLight, 'intensity').min(0).max(1).step(0.001)
-gui.add(directionalLight.position, 'x').min(-5).max(5).step(0.001)
-gui.add(directionalLight.position, 'y').min(-5).max(5).step(0.001)
-gui.add(directionalLight.position, 'z').min(-5).max(5).step(0.001)
-scene.add(directionalLight)
-
-// Spot light
-const spotLight = new THREE.SpotLight(0xffffff, 0.3, 10, Math.PI * 0.3)
-spotLight.castShadow = true
-spotLight.shadow.mapSize.width = 1024
-spotLight.shadow.mapSize.height = 1024
-spotLight.shadow.camera.fov = 30
-spotLight.shadow.camera.near = 1
-spotLight.shadow.camera.far = 6
-
-spotLight.position.set(0, 2, 2)
-
-scene.add(spotLight)
-scene.add(spotLight.target)
-
-const spotLightCameraHelper = new THREE.CameraHelper(spotLight.shadow.camera)
-spotLightCameraHelper.visible = false
-scene.add(spotLightCameraHelper)
-
-// Point light
-const pointLight = new THREE.PointLight(0xffffff, 0.3)
-
-pointLight.castShadow = true
-spotLight.shadow.mapSize.width = 1024
-spotLight.shadow.mapSize.height = 1024
-pointLight.shadow.camera.near = 0.1
-pointLight.shadow.camera.far = 5
-
-pointLight.position.set(-1, 1, 0)
-
-scene.add(pointLight)
-
-const pointLightCameraHelper = new THREE.CameraHelper(pointLight.shadow.camera)
-pointLightCameraHelper.visible = false
-scene.add(pointLightCameraHelper)
+const textureLoader = new THREE.TextureLoader()
+const matcapTexture = textureLoader.load(require('./assets/textures/matcaps/4.png'))
+const matcapMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture })
 
 /**
- * Materials
+ * Fonts
  */
-const material = new THREE.MeshStandardMaterial()
-material.roughness = 0.7
-gui.add(material, 'metalness').min(0).max(1).step(0.001)
-gui.add(material, 'roughness').min(0).max(1).step(0.001)
-
-/**
- * Objects
- */
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), material)
-sphere.castShadow = true
-
-const plane = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), material)
-plane.rotation.x = -Math.PI * 0.5
-plane.position.y = -0.5
-plane.receiveShadow = true
-
-scene.add(sphere, plane)
-
-const sphereShadow = new THREE.Mesh(
-  new THREE.PlaneBufferGeometry(1.5, 1.5),
-  new THREE.MeshBasicMaterial({
-    color: 0x000000,
-    transparent: true,
-    alphaMap: shadowTexture,
+const fontLoader = new THREE.FontLoader()
+fontLoader.load('fonts/Roboto_Regular.json', (font) => {
+  const textGeometry = new THREE.TextBufferGeometry('Jane Molodetskaya', {
+    font: font,
+    size: 0.5,
+    height: 0.2,
+    curveSegments: 5,
+    bevelEnabled: true,
+    bevelThickness: 0.03,
+    bevelSize: 0.02,
+    bevelOffset: 0,
+    bevelSegments: 4,
   })
-)
-sphereShadow.rotation.x = -Math.PI * 0.5
-sphereShadow.position.y = plane.position.y + 0.01
+  // manual text centring
+  // textGeometry.computeBoundingBox()
+  // textGeometry.translate(-(textGeometry.boundingBox.max.x - 0.02) * 0.5, -(textGeometry.boundingBox.max.y - 0.02) * 0.5, -(textGeometry.boundingBox.max.z - 0.03) * 0.5)
 
-scene.add(sphereShadow)
+  textGeometry.center()
+
+  const text = new THREE.Mesh(textGeometry, matcapMaterial)
+  scene.add(text)
+
+  const donutGeometry = new THREE.TorusBufferGeometry(0.3, 0.2, 20, 45)
+
+  for (let i = 0; i < 300; i++) {
+    const donut = new THREE.Mesh(donutGeometry, matcapMaterial)
+    donut.position.x = (Math.random() - 0.5) * 10
+    donut.position.y = (Math.random() - 0.5) * 10
+    donut.position.z = (Math.random() - 0.5) * 10
+
+    donut.rotation.x = Math.random() * Math.PI
+    donut.rotation.y = Math.random() * Math.PI
+
+    const scale = Math.random()
+    donut.scale.set(scale, scale, scale)
+
+    scene.add(donut)
+  }
+})
 
 /**
  * Sizes
@@ -166,9 +109,6 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-// renderer.shadowMap.enabled = true
-renderer.shadowMap.enabled = false
-renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
 /**
  * Animate
@@ -177,18 +117,6 @@ const clock = new THREE.Clock()
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime()
-
-  // Update the sphere
-  sphere.position.x = Math.cos(elapsedTime) * 1.5
-  sphere.position.z = Math.sin(elapsedTime) * 1.5
-  sphere.position.y = Math.abs(Math.sin(elapsedTime * 3))
-
-  // Update shadow
-  sphereShadow.position.x = sphere.position.x
-  sphereShadow.position.z = sphere.position.z
-  sphereShadow.material.opacity = (1 - Math.abs(sphere.position.y)) * 0.3
-  sphereShadow.scale.x = sphere.position.y * 1.5
-  sphereShadow.scale.y = sphere.position.y * 1.5
 
   // Update controls
   controls.update()
