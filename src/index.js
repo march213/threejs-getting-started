@@ -19,51 +19,48 @@ const scene = new THREE.Scene()
  * Textures
  */
 const textureLoader = new THREE.TextureLoader()
-const matcapTexture = textureLoader.load(require('./assets/textures/matcaps/4.png'))
-const matcapMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture })
 
 /**
- * Fonts
+ * House
  */
-const fontLoader = new THREE.FontLoader()
-fontLoader.load('fonts/Roboto_Regular.json', (font) => {
-  const textGeometry = new THREE.TextBufferGeometry('Jane Molodetskaya', {
-    font: font,
-    size: 0.5,
-    height: 0.2,
-    curveSegments: 5,
-    bevelEnabled: true,
-    bevelThickness: 0.03,
-    bevelSize: 0.02,
-    bevelOffset: 0,
-    bevelSegments: 4,
-  })
-  // manual text centring
-  // textGeometry.computeBoundingBox()
-  // textGeometry.translate(-(textGeometry.boundingBox.max.x - 0.02) * 0.5, -(textGeometry.boundingBox.max.y - 0.02) * 0.5, -(textGeometry.boundingBox.max.z - 0.03) * 0.5)
+// Group
+const house = new THREE.Group()
+scene.add(house)
 
-  textGeometry.center()
+// Walls
+const houseHeight = 2.5
+const walls = new THREE.Mesh(new THREE.BoxBufferGeometry(4, houseHeight, 4), new THREE.MeshStandardMaterial({ color: 0xac8e82 }))
+walls.position.y = houseHeight / 2
+house.add(walls)
 
-  const text = new THREE.Mesh(textGeometry, matcapMaterial)
-  scene.add(text)
+// Roof
+const roof = new THREE.Mesh(new THREE.ConeBufferGeometry(3.5, 1, 4), new THREE.MeshStandardMaterial({ color: 0xb35f45 }))
+roof.position.y = houseHeight + 1 / 2
+roof.rotation.y = Math.PI * 0.25
+house.add(roof)
 
-  const donutGeometry = new THREE.TorusBufferGeometry(0.3, 0.2, 20, 45)
+// Floor
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), new THREE.MeshStandardMaterial({ color: '#a9c388' }))
+floor.rotation.x = -Math.PI * 0.5
+floor.position.y = 0
+scene.add(floor)
 
-  for (let i = 0; i < 300; i++) {
-    const donut = new THREE.Mesh(donutGeometry, matcapMaterial)
-    donut.position.x = (Math.random() - 0.5) * 10
-    donut.position.y = (Math.random() - 0.5) * 10
-    donut.position.z = (Math.random() - 0.5) * 10
+/**
+ * Lights
+ */
+// Ambient light
+const ambientLight = new THREE.AmbientLight('#ffffff', 0.5)
+gui.add(ambientLight, 'intensity').min(0).max(1).step(0.001)
+scene.add(ambientLight)
 
-    donut.rotation.x = Math.random() * Math.PI
-    donut.rotation.y = Math.random() * Math.PI
-
-    const scale = Math.random()
-    donut.scale.set(scale, scale, scale)
-
-    scene.add(donut)
-  }
-})
+// Directional light
+const moonLight = new THREE.DirectionalLight('#ffffff', 0.5)
+moonLight.position.set(4, 5, -2)
+gui.add(moonLight, 'intensity').min(0).max(1).step(0.001)
+gui.add(moonLight.position, 'x').min(-5).max(5).step(0.001)
+gui.add(moonLight.position, 'y').min(-5).max(5).step(0.001)
+gui.add(moonLight.position, 'z').min(-5).max(5).step(0.001)
+scene.add(moonLight)
 
 /**
  * Sizes
@@ -92,9 +89,9 @@ window.addEventListener('resize', () => {
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 1
-camera.position.y = 1
-camera.position.z = 2
+camera.position.x = 4
+camera.position.y = 2
+camera.position.z = 5
 scene.add(camera)
 
 // Controls
