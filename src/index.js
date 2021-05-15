@@ -25,6 +25,8 @@ scene.fog = fog
  * Textures
  */
 const textureLoader = new THREE.TextureLoader()
+
+// Door
 const doorColorTexture = textureLoader.load(require('./assets/textures/door/color.jpg'))
 const doorAlphaTexture = textureLoader.load(require('./assets/textures/door/alpha.jpg'))
 const doorHeightTexture = textureLoader.load(require('./assets/textures/door/height.jpg'))
@@ -32,6 +34,33 @@ const doorAmbientOcclusionTexture = textureLoader.load(require('./assets/texture
 const doorMetalnessTexture = textureLoader.load(require('./assets/textures/door/metalness.jpg'))
 const doorNormalTexture = textureLoader.load(require('./assets/textures/door/normal.jpg'))
 const doorRoughnessTexture = textureLoader.load(require('./assets/textures/door/roughness.jpg'))
+
+// Bricks
+const bricksColorTexture = textureLoader.load(require('./assets/textures/bricks/color.jpg'))
+const bricksAmbientOcclusionTexture = textureLoader.load(require('./assets/textures/bricks/ambientOcclusion.jpg'))
+const bricksNormalTexture = textureLoader.load(require('./assets/textures/bricks/normal.jpg'))
+const bricksRoughnessTexture = textureLoader.load(require('./assets/textures/bricks/roughness.jpg'))
+
+// Grass
+const grassColorTexture = textureLoader.load(require('./assets/textures/grass/color.jpg'))
+const grassAmbientOcclusionTexture = textureLoader.load(require('./assets/textures/grass/ambientOcclusion.jpg'))
+const grassNormalTexture = textureLoader.load(require('./assets/textures/grass/normal.jpg'))
+const grassRoughnessTexture = textureLoader.load(require('./assets/textures/grass/roughness.jpg'))
+
+grassColorTexture.repeat.set(8, 8)
+grassAmbientOcclusionTexture.repeat.set(8, 8)
+grassNormalTexture.repeat.set(8, 8)
+grassRoughnessTexture.repeat.set(8, 8)
+
+grassColorTexture.wrapS = THREE.RepeatWrapping
+grassAmbientOcclusionTexture.wrapS = THREE.RepeatWrapping
+grassNormalTexture.wrapS = THREE.RepeatWrapping
+grassRoughnessTexture.wrapS = THREE.RepeatWrapping
+
+grassColorTexture.wrapT = THREE.RepeatWrapping
+grassAmbientOcclusionTexture.wrapT = THREE.RepeatWrapping
+grassNormalTexture.wrapT = THREE.RepeatWrapping
+grassRoughnessTexture.wrapT = THREE.RepeatWrapping
 
 /**
  * House
@@ -42,7 +71,16 @@ scene.add(house)
 
 // Walls
 const houseHeight = 2.5
-const walls = new THREE.Mesh(new THREE.BoxBufferGeometry(4, houseHeight, 4), new THREE.MeshStandardMaterial({ color: 0xac8e82 }))
+const walls = new THREE.Mesh(
+  new THREE.BoxBufferGeometry(4, houseHeight, 4),
+  new THREE.MeshStandardMaterial({
+    map: bricksColorTexture,
+    aoMap: bricksAmbientOcclusionTexture,
+    normalMap: bricksNormalTexture,
+    roughness: bricksRoughnessTexture,
+  })
+)
+walls.geometry.setAttribute('uv2', new THREE.Float32BufferAttribute(walls.geometry.attributes.uv.array, 2))
 walls.position.y = houseHeight / 2
 house.add(walls)
 
@@ -54,9 +92,9 @@ roof.rotation.y = Math.PI * 0.25
 house.add(roof)
 
 // Door
-const doorHeight = 2
+const doorHeight = 2.2
 const door = new THREE.Mesh(
-  new THREE.PlaneBufferGeometry(2, doorHeight, 100, 100),
+  new THREE.PlaneBufferGeometry(2.2, doorHeight, 100, 100),
   new THREE.MeshStandardMaterial({
     map: doorColorTexture,
     transparent: true,
@@ -117,7 +155,16 @@ for (let i = 0; i < 45; i++) {
 }
 
 // Floor
-const floor = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), new THREE.MeshStandardMaterial({ color: '#a9c388' }))
+const floor = new THREE.Mesh(
+  new THREE.PlaneBufferGeometry(20, 20),
+  new THREE.MeshStandardMaterial({
+    map: grassColorTexture,
+    aoMap: grassAmbientOcclusionTexture,
+    normalMap: grassNormalTexture,
+    roughnessMap: grassRoughnessTexture,
+  })
+)
+floor.geometry.setAttribute('uv2', new THREE.Float32BufferAttribute(floor.geometry.attributes.uv.array, 2))
 floor.rotation.x = -Math.PI * 0.5
 floor.position.y = 0
 scene.add(floor)
