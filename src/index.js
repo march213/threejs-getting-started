@@ -25,6 +25,13 @@ scene.fog = fog
  * Textures
  */
 const textureLoader = new THREE.TextureLoader()
+const doorColorTexture = textureLoader.load(require('./assets/textures/door/color.jpg'))
+const doorAlphaTexture = textureLoader.load(require('./assets/textures/door/alpha.jpg'))
+const doorHeightTexture = textureLoader.load(require('./assets/textures/door/height.jpg'))
+const doorAmbientOcclusionTexture = textureLoader.load(require('./assets/textures/door/ambientOcclusion.jpg'))
+const doorMetalnessTexture = textureLoader.load(require('./assets/textures/door/metalness.jpg'))
+const doorNormalTexture = textureLoader.load(require('./assets/textures/door/normal.jpg'))
+const doorRoughnessTexture = textureLoader.load(require('./assets/textures/door/roughness.jpg'))
 
 /**
  * House
@@ -48,7 +55,21 @@ house.add(roof)
 
 // Door
 const doorHeight = 2
-const door = new THREE.Mesh(new THREE.PlaneBufferGeometry(2, doorHeight), new THREE.MeshStandardMaterial({ color: 0xaa7b7b }))
+const door = new THREE.Mesh(
+  new THREE.PlaneBufferGeometry(2, doorHeight, 100, 100),
+  new THREE.MeshStandardMaterial({
+    map: doorColorTexture,
+    transparent: true,
+    alphaMap: doorAlphaTexture,
+    aoMap: doorAmbientOcclusionTexture,
+    displacementMap: doorHeightTexture,
+    displacementScale: 0.1,
+    normalMap: doorNormalTexture,
+    roughnessMap: doorRoughnessTexture,
+    metalnessMap: doorMetalnessTexture,
+  })
+)
+door.geometry.setAttribute('uv2', new THREE.Float32BufferAttribute(door.geometry.attributes.uv.array, 2))
 door.position.y = doorHeight / 2
 door.position.z = 2.001
 house.add(door)
