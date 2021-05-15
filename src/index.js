@@ -151,6 +151,7 @@ for (let i = 0; i < 45; i++) {
   grave.position.set(x, 0.3, z)
   grave.rotation.y = (Math.random() - 0.5) * 0.4
   grave.rotation.z = (Math.random() - 0.5) * 0.4
+  grave.castShadow = true
   graves.add(grave)
 }
 
@@ -246,6 +247,41 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 renderer.setClearColor(0x262837)
 
+//Shadows
+moonLight.castShadow = true
+renderer.shadowMap.type = THREE.PCFSoftShadowMap
+renderer.shadowMap.enabled = true
+
+walls.castShadow = true
+bush1.castShadow = true
+bush2.castShadow = true
+bush3.castShadow = true
+bush4.castShadow = true
+
+floor.receiveShadow = true
+
+doorLight.castShadow = true
+doorLight.shadow.mapSize.width = 256
+doorLight.shadow.mapSize.height = 256
+doorLight.shadow.camera.far = 7
+
+ghost1.castShadow = true
+ghost1.shadow.mapSize.width = 256
+ghost1.shadow.mapSize.height = 256
+ghost1.shadow.camera.far = 7
+
+ghost2.castShadow = true
+ghost2.castShadow = true
+ghost2.shadow.mapSize.width = 256
+ghost2.shadow.mapSize.height = 256
+ghost2.shadow.camera.far = 7
+
+ghost3.castShadow = true
+ghost3.castShadow = true
+ghost3.shadow.mapSize.width = 256
+ghost3.shadow.mapSize.height = 256
+ghost3.shadow.camera.far = 7
+
 /**
  * Animate
  */
@@ -268,7 +304,7 @@ const tick = () => {
   const ghost3Angle = -elapsedTime * 0.18
   ghost3.position.x = Math.cos(ghost3Angle) * (7 + Math.sin(elapsedTime * 0.32))
   ghost3.position.z = Math.sin(ghost3Angle) * (7 + Math.sin(elapsedTime * 0.5))
-  ghost3.position.y = Math.sin(elapsedTime * 4) + Math.sin(elapsedTime * 2.5)
+  ghost3.position.y = Math.sin(elapsedTime * 5) + Math.sin(elapsedTime * 2)
 
   // Update controls
   controls.update()
