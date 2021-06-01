@@ -23,18 +23,28 @@ parameters.count = 1000
 
 const generateGalaxy = () => {
   const geometry = new THREE.BufferGeometry()
-  const material = new THREE.PointsMaterial({
-    size: 0.05,
-    sizeAttenuation: true,
-  })
   const positions = new Float32Array(parameters.count * 3)
 
-  for (let i = 0; i < parameters.count * 3; i++) {
-    positions[i] = (Math.random() - 0.5) * 10
+  for (let i = 0; i < parameters.count; i++) {
+    const i3 = i * 3
+    positions[i3] = (Math.random() - 0.5) * 3 // x
+    positions[i3 + 1] = (Math.random() - 0.5) * 3 // y
+    positions[i3 + 2] = (Math.random() - 0.5) * 3 // z
   }
 
   geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-  scene.add(new THREE.Points(geometry, material))
+
+  // Material
+  const material = new THREE.PointsMaterial({
+    size: 0.05,
+    sizeAttenuation: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  })
+
+  // Points
+  const points = new THREE.Points(geometry, material)
+  scene.add(points)
 }
 
 generateGalaxy()
